@@ -1,4 +1,5 @@
-import './assets/main.css'
+import '@unocss/reset/tailwind.css'
+import '@fontsource-variable/sora'
 import 'virtual:uno.css'
 
 import { createApp } from 'vue'

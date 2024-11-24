@@ -8,6 +8,12 @@ importers:
 
   .:
     dependencies:
+      '@fontsource-variable/sora':
+        specifier: ^5.1.0
+        version: 5.1.0
+      '@iconify-json/mingcute':
+        specifier: ^1.2.1
+        version: 1.2.1
       '@unocss/reset':
         specifier: ^0.64.1
         version: 0.64.1
@@ -475,6 +481,12 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@fontsource-variable/sora@5.1.0':
+    resolution: {integrity: sha512-RaTPCBvI5g1eTnzlG5H3J/m0izYXH31qKmpYiCXjK5lOe4oQYaKd/3eZ70xV6KMy1Eiic275xGihj04lxTu8Ng==}
+
+  '@iconify-json/mingcute@1.2.1':
+    resolution: {integrity: sha512-rv682dBsjKUs1/AVg5tOegAunjCLuqyQufXU0D6Kbmgg5jMoUcl/9K2C+9MAiepBP0Eyb05YwXQvGaXMLPu/YA==}
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -1764,6 +1776,12 @@ snapshots:
 
   '@esbuild/win32-x64@0.23.1':
     optional: true
+
+  '@fontsource-variable/sora@5.1.0': {}
+
+  '@iconify-json/mingcute@1.2.1':
+    dependencies:
+      '@iconify/types': 2.0.0
 
   '@iconify/types@2.0.0': {}
 
