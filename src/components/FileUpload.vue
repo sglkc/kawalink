@@ -40,7 +40,7 @@ function onFileChange(e: Event | DragEvent) {
 
 <template>
   <label
-    class="px-4 py-8 b-2 b-black shadow-base rounded grid gap-2 justify-center text-center cursor-pointer"
+    class="p-8 b-2 b-black shadow-base rounded grid gap-2 justify-center text-center cursor-pointer"
     :class="{ 'bg-green-100': isOnTop, 'b-dashed': !model }"
     @dragover="onDragOver"
     @dragleave="onDragLeave"
