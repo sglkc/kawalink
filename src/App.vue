@@ -2,15 +2,14 @@
 import { ref } from 'vue'
 import Button from './components/Button.vue'
 import Input from './components/Input.vue'
+import FileUpload from './components/FileUpload.vue'
 
 const secret = ref(location.hash?.slice(1))
 const hasJoined = ref(false)
+const file = ref<File>()
 
 function onFormSubmit(e: Event) {
   e.preventDefault()
-
-  if (hasJoined.value) return
-
   hasJoined.value = true
 }
 
@@ -21,10 +20,14 @@ function leave() {
 function copyToClipboard() {
   navigator.clipboard.writeText(secret.value)
 }
+
+function onReceiverSubmit(e: Event) {
+  e.preventDefault()
+}
 </script>
 
 <template>
-  <main class="font-body p-8 grid justify-center gap-4">
+  <main class="font-body p-8 mx-auto grid gap-4 max-w-96">
     <form class="grid gap-2" @submit="onFormSubmit">
       <label for="id-input">Enter your secret name</label>
       <div class="flex gap-2">
@@ -45,5 +48,16 @@ function copyToClipboard() {
         </Button>
       </div>
     </form>
+    <form class="grid gap-2" @submit="onReceiverSubmit">
+      <label for="sender-code">Enter sender secret</label>
+      <div class="flex gap-2">
+        <Input
+          v-model.trim="secret"
+          id="sender-code"
+        />
+        <Button class="bg-green-300" type="submit">CONNECT</Button>
+      </div>
+    </form>
+    <FileUpload v-model="file" />
   </main>
 </template>
