@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import Button from '@/components/Button.vue'
 import FileUpload from '@/components/FileUpload.vue'
-
-const file = ref<File>()
+import { sendFile } from '@/store/p2p'
 </script>
 
 <template>
-  <FileUpload v-model="file" />
+  <FileUpload />
+  <Button @click.prevent="sendFile">send</Button>
 </template>

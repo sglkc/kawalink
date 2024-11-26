@@ -24,8 +24,8 @@ import { toasts } from '@/store/toast'
     </div>
     <div v-if="settings.mode === 'sender'" class="grid gap-4">
       <SenderButton />
-      <SenderList v-show="isConnected" />
-      <UploadForm v-show="isConnected" />
+      <SenderList v-if="isConnected" />
+      <UploadForm v-if="isConnected" />
     </div>
     <div v-else class="grid gap-4">
       <ReceiverForm  />

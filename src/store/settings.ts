@@ -4,7 +4,6 @@ interface Settings {
   username: string
   sender: string
   mode: 'sender' | 'receiver'
-  file?: File
 }
 
 const settings = shallowReactive<Settings>({

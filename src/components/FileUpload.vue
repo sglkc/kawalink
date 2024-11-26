@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { file } from '@/store/p2p'
 
-const model = defineModel<File | null>()
 const isOnTop = ref(false)
 const sizeFormatter = new Intl.NumberFormat([], {
   style: 'unit',
@@ -22,42 +22,42 @@ function onDragLeave() {
 function onFileChange(e: Event | DragEvent) {
   e.preventDefault()
 
-  let file
+  let uploadedFile
 
   if ('dataTransfer' in e && e.dataTransfer) {
-    file = e.dataTransfer.files?.item(0)
+    uploadedFile = e.dataTransfer.files?.item(0)
   } else {
-    file = (e.currentTarget as HTMLInputElement).files?.item(0)
+    uploadedFile = (e.currentTarget as HTMLInputElement).files?.item(0)
   }
 
+  if (!uploadedFile) return
+
+  file.value = uploadedFile
   isOnTop.value = false
-
-  if (!file) return
-
-  model.value = file
+  console.log(file.value)
 }
 </script>
 
 <template>
   <label
     class="p-8 b-2 b-black shadow-base rounded grid gap-2 justify-center text-center cursor-pointer"
-    :class="{ 'bg-green-100': isOnTop, 'b-dashed': !model }"
+    :class="{ 'bg-green-100': isOnTop, 'b-dashed': !file }"
     @dragover="onDragOver"
     @dragleave="onDragLeave"
     @drop="onFileChange"
   >
     <p class="touch-none select-none truncate">
-      {{ model ? model.name : 'Click or drag-and-drop a file to send' }}
+      {{ file ? file.name : 'Click or drag-and-drop a file to send' }}
     </p>
     <div
       class="touch-none select-none text-4xl m-auto"
       :class="{
-        'i-mci:upload-line': !model,
-        'i-mci:file-line': model,
+        'i-mci:upload-line': !file,
+        'i-mci:file-line': file,
       }"
     />
     <p class="text-sm text-gray-500">
-      {{ model?.size && sizeFormatter.format(model.size) }}
+      {{ file?.size && sizeFormatter.format(file.size) }}
     </p>
     <input @change="onFileChange" class="hidden" type="file" />
   </label>

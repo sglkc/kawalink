@@ -2,10 +2,19 @@ import { ref } from 'vue'
 import Peer, { PeerError, type DataConnection } from 'peerjs'
 import { addToast } from './toast'
 
+interface FileMetadata {
+  name: string
+  size: number
+  type: string
+}
+
 const ID_PREFIX = 'p2share-'
 
 export const peer = ref<Peer>()
 export const receiver = ref<DataConnection>()
+export const file = ref<File>()
+export const fileMetadata = ref<FileMetadata>()
+export const fileProgress = ref(0)
 export const isConnected = ref(false)
 
 export async function start(id: string) {
@@ -72,5 +81,45 @@ export async function connect(id: string) {
       addToast({ type: 'error', text: 'Disconnected from sender' })
       stop()
     })
+
+    connection.on('data', (data) => {
+      if (!data) return
+
+      if (data instanceof Uint8Array) {
+        const metadata = fileMetadata.value
+        const $file = new Blob([data], { type: metadata?.type })
+        const a = document.createElement('a')
+
+        fileProgress.value = 1
+        a.href = URL.createObjectURL($file)
+        a.download = metadata?.name ?? Date.now().toString()
+        a.click()
+        URL.revokeObjectURL(a.href)
+
+        return
+      }
+
+      fileMetadata.value = data as FileMetadata
+      fileProgress.value = 0
+    })
+
+    connection.dataChannel.onmessage = (e) => {
+      if (!(e.data instanceof ArrayBuffer) || !fileMetadata.value) return
+
+      fileProgress.value += e.data.byteLength / fileMetadata.value.size
+      console.log(fileProgress.value)
+    }
   })
+}
+
+export async function sendFile() {
+  const $file = file.value
+  const $receiver = receiver.value
+
+  if (!$file || !$receiver) return
+
+  const { name, size, type } = $file
+
+  $receiver.send({ name, size, type })
+  $receiver.send($file, true)
 }
