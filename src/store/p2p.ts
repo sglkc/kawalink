@@ -53,24 +53,22 @@ export async function connect(id: string) {
     if (!peer.value) return reject(new Error('Peer not started'))
     if (receiver.value) return resolve()
 
-    const connectionHandler = () => {
-      addToast({ type: 'success', text: `Connected to ${id}` })
-      connection.off('open', connectionHandler)
-      resolve()
-    }
-
-    const connectionErrorHandler = (error: PeerError<string>) => {
+    function peerErrorHandler(error: PeerError<string>) {
       if (error.type !== 'unavailable-id' && !error.message.includes(id)) return
-
-      connection.off('error', connectionErrorHandler)
+      connection.off('error', peerErrorHandler)
       reject()
     }
 
+    peer.value.on('error', peerErrorHandler)
+
     const connection = peer.value.connect(ID_PREFIX + id, { reliable: true, label: id })
 
-    connection.on('open', connectionHandler)
-    connection.on('error', connectionErrorHandler)
-    connection.on('close', () => {
+    connection.once('open', () => {
+      addToast({ type: 'success', text: `Connected to ${id}` })
+      resolve()
+    })
+
+    connection.once('close', () => {
       addToast({ type: 'error', text: 'Disconnected from sender' })
       stop()
     })
