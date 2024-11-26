@@ -11,7 +11,9 @@ export const isConnected = ref(false)
 export const connections = shallowReactive(new Map<string, DataConnection>())
 
 export async function start(id: string) {
-  return new Promise((resolve) => {
+  return new Promise<Peer>((resolve, reject) => {
+    if (peer.value) return resolve(peer.value)
+
     const newPeer = new Peer(ID_PREFIX + id, { secure: true, debug: 3 })
 
     newPeer
@@ -30,10 +32,7 @@ export async function start(id: string) {
         connections.set(id, connection)
         addToast({ type: 'success', text: `${id} joined` })
       })
-      .on('disconnected', () => {
-        addToast({ type: 'error', text: 'Disconnected from sender' })
-        stop()
-      })
+      .on('disconnected', reject)
       .on('error', (error) => {
         addToast({ type: 'error', text: error.message.replace(ID_PREFIX, '') })
         stop()
@@ -53,22 +52,26 @@ export function stop() {
 }
 
 export async function connect(id: string) {
-  return new Promise<DataConnection>((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     if (!peer.value) return reject(new Error('Peer not started'))
-    if (connections.has(id)) return resolve(connections.get(id)!)
+    if (connections.has(id)) return resolve()
 
-    const connectErrorHandler = (error: PeerError<string>) => {
-      if (error.type !== 'peer-unavailable' && !error.message.includes(id)) return
+    const connectionHandler = () => {
+      connection.off('open', connectionHandler)
+      resolve()
+    }
 
-      peer.value?.off('error', connectErrorHandler)
+    const connectionErrorHandler = (error: PeerError<string>) => {
+      if (error.type !== 'unavailable-id' && !error.message.includes(id)) return
+
+      connection.off('error', connectionErrorHandler)
       reject()
     }
 
-    peer.value.on('error', connectErrorHandler)
-
     const connection = peer.value.connect(ID_PREFIX + id, { reliable: true, label: id })
 
-    connection.once('open', () => resolve(connection))
+    connection.on('open', connectionHandler)
+    connection.on('error', connectionErrorHandler)
     connection.on('close', () => {
       addToast({ type: 'error', text: 'Disconnected from sender' })
       stop()

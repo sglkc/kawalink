@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { isConnected } from '@/store/p2p'
 import settings from '@/store/settings'
+
+const modes = ['Sender', 'Receiver']
 </script>
 
 <template>
@@ -9,28 +11,16 @@ import settings from '@/store/settings'
     :class="{ 'bg-gray-100': isConnected }"
   >
     <label
+      v-for="mode in modes"
       class="p-4 cursor-pointer transition-background-color"
-      :class="{ 'bg-green-200': settings.mode === 'sender' }"
+      :class="{ 'bg-blue-200': settings.mode === mode.toLowerCase() }"
     >
-      <div>Sender</div>
+      <div>{{ mode }}</div>
       <input
         class="hidden"
         v-model="settings.mode"
         type="radio"
-        value="sender"
-        :disabled="isConnected"
-      />
-    </label>
-    <label
-      class="p-4 cursor-pointer transition-background-color"
-      :class="{ 'bg-green-200': settings.mode === 'receiver' }"
-    >
-      <div>Receiver</div>
-      <input
-        class="hidden"
-        v-model="settings.mode"
-        type="radio"
-        value="receiver"
+        :value="mode.toLowerCase()"
         :disabled="isConnected"
       />
     </label>

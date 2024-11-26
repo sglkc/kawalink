@@ -22,7 +22,6 @@ import { toasts } from '@/store/toast'
       <UsernameForm />
       <ModeSwitch />
     </div>
-    <hr class="b-1.5 b-base" />
     <div v-if="settings.mode === 'sender'" class="grid gap-4">
       <SenderButton />
       <SenderList v-show="isConnected" />

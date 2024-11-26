@@ -7,13 +7,18 @@ import { addToast } from '@/store/toast'
 
 const loading = ref(false)
 
-function onFormSubmit() {
+async function onFormSubmit() {
   const username = settings.username
 
   if (!username) return
 
-  loading.value = true
-  start(username).finally(() => loading.value = false)
+  try {
+    loading.value = true
+    await start(username)
+  } catch {
+  } finally {
+    loading.value = false
+  }
 }
 
 function copyUrl() {
