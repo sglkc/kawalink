@@ -24,18 +24,22 @@ export async function start(id: string) {
         addToast({ type: 'error', text: 'Disconnected from network' })
       })
       .on('connection', (connection) => {
-        connections.set(connection.peer, connection)
+        const id = connection.peer.slice(ID_PREFIX.length)
+
+        connections.set(id, connection)
+        addToast({ type: 'success', text: 'Connected to ' + id })
       })
 
     peer.value = newPeer
   })
+    .catch(console.warn)
 }
 
 export function stop(reason?: string) {
   if (!peer.value) return
 
   if (reason) {
-    addToast({ type: 'error', text: `Error connecting to peer: ${reason}` })
+    addToast({ type: 'error', text: reason })
   }
 
   connections.clear()
@@ -45,9 +49,9 @@ export function stop(reason?: string) {
 }
 
 export async function connect(id: string) {
-  return new Promise((resolve, reject) => {
+  return new Promise<DataConnection>((resolve, reject) => {
     if (!peer.value) return reject('Not connected')
-    if (connections.has(id)) return resolve(connections.get(id))
+    if (connections.has(id)) return resolve(connections.get(id)!)
 
     const connection = peer.value.connect(ID_PREFIX + id, { reliable: true, label: id })
 

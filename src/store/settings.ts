@@ -15,8 +15,4 @@ watchEffect(() => {
   localStorage.setItem('p2share-username', settings.username)
 })
 
-watchEffect(() => {
-  location.replace('#' + settings.sender)
-})
-
 export default settings

@@ -38,8 +38,10 @@ function copyUrl() {
         v-model.trim="settings.username"
         id="id-input"
         :class="{ 'bg-gray-100': p2p.isConnected.value }"
-        placeholder="Only alphanumerics"
+        placeholder="Must be alphanumeric"
         pattern="[\w\d]{1,32}"
+        minlength="1"
+        maxlength="32"
         autocomplete="off"
         :readonly="p2p.isConnected.value"
         required
