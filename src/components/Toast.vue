@@ -1,6 +1,6 @@
 <script setup lang="ts">
 export interface ToastProps {
-  type: 'success' | 'error' | 'info'
+  type?: 'success' | 'error' | 'info'
   text?: string
 }
 
@@ -11,6 +11,7 @@ const { type, text } = defineProps<ToastProps>()
   <div
     class="fixed top-4 right-4 p-4 b-2 b-base shadow-base"
     :class="{
+      'bg-white': !type,
       'bg-green-200': type === 'success',
       'bg-red-200': type === 'error',
       'bg-blue-200': type === 'info',

@@ -6,10 +6,10 @@ import settings from '@/store/settings'
 <template>
   <div
     class="divide-x-2 divide-black b-2 b-base shadow-base rounded grid grid-cols-2 text-center"
-    :class="{ 'bg-gray-200': isConnected }"
+    :class="{ 'bg-gray-100': isConnected }"
   >
     <label
-      class="p-4 cursor-pointer"
+      class="p-4 cursor-pointer transition-background-color"
       :class="{ 'bg-green-200': settings.mode === 'sender' }"
     >
       <div>Sender</div>
@@ -22,7 +22,7 @@ import settings from '@/store/settings'
       />
     </label>
     <label
-      class="p-4 cursor-pointer"
+      class="p-4 cursor-pointer transition-background-color"
       :class="{ 'bg-green-200': settings.mode === 'receiver' }"
     >
       <div>Receiver</div>

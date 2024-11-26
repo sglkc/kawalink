@@ -17,11 +17,18 @@ import { toasts } from '@/store/toast'
     </div>
   </TransitionGroup>
   <form class="font-body md:p-8 p-4 mx-auto grid gap-4 max-w-128">
-    <UsernameForm />
-    <ModeSwitch />
-    <ReceiverForm v-if="settings.mode === 'receiver'" />
-    <SenderButton v-if="settings.mode === 'sender'"/>
-    <UploadForm v-if="(settings.mode === 'sender') && isConnected" />
+    <div class="grid gap-4">
+      <UsernameForm />
+      <ModeSwitch />
+    </div>
+    <hr class="b-1.5 b-base" />
+    <div v-if="settings.mode === 'sender'" class="grid gap-4">
+      <SenderButton />
+      <UploadForm v-if="isConnected" />
+    </div>
+    <div v-else class="grid gap-4">
+      <ReceiverForm  />
+    </div>
   </form>
 </template>
 

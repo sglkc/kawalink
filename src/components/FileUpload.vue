@@ -56,11 +56,9 @@ function onFileChange(e: Event | DragEvent) {
         'i-mci:file-line': model,
       }"
     />
-    <p class="text-sm text-gray-500">{{ model?.size && sizeFormatter.format(model.size) }}</p>
-    <input
-      @change="onFileChange"
-      class="hidden"
-      type="file"
-    />
+    <p class="text-sm text-gray-500">
+      {{ model?.size && sizeFormatter.format(model.size) }}
+    </p>
+    <input @change="onFileChange" class="hidden" type="file" />
   </label>
 </template>

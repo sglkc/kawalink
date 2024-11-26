@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import Button from '@/components/Button.vue'
 import Input from '@/components/Input.vue'
-import { peer, connections, connect, start, stop } from '@/store/p2p'
+import { peer, isConnected, connect, start, stop } from '@/store/p2p'
 import settings from '@/store/settings'
 
 const loading = ref(false)
@@ -35,17 +35,17 @@ async function onReceiverSubmit() {
         v-model.trim="settings.sender"
         id="sender-code"
         class="grow"
-        :class="{ 'bg-gray-200': connections.has(settings.sender) }"
+        :class="{ 'bg-gray-100': isConnected }"
         placeholder="Must be alphanumeric"
         pattern="[\w\d]{1,32}"
         minlength="1"
         maxlength="32"
         autocomplete="off"
         required
-        :readonly="connections.has(settings.sender)"
+        :readonly="isConnected"
       />
       <Button
-        v-if="!connections.has(settings.sender)"
+        v-if="!isConnected"
         :class="{ 'bg-green-300': !loading, 'bg-gray-300': loading }"
         type="submit"
         :disabled="loading"

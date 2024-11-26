@@ -19,15 +19,20 @@ export async function start(id: string) {
         isConnected.value = true
         resolve(newPeer)
       })
-      .on('error', (error) => {
-        addToast({ type: 'error', text: error.message })
-        stop()
-      })
       .on('connection', (connection) => {
-        const id = connection.peer.slice(ID_PREFIX.length)
+        const id = connection.label
+
+        connection.on('close', () => {
+          connections.delete(id)
+          addToast({ type: 'error', text: `${id} left` })
+        })
 
         connections.set(id, connection)
-        addToast({ type: 'success', text: 'Connected to ' + id })
+        addToast({ type: 'success', text: `${id} joined` })
+      })
+      .on('error', (error) => {
+        addToast({ type: 'error', text: error.message.replace(ID_PREFIX, '') })
+        stop()
       })
 
     peer.value = newPeer
@@ -55,17 +60,7 @@ export async function connect(id: string) {
       reject()
     }
 
-    const connection = peer.value.connect(ID_PREFIX + id, { reliable: true, label: id })
-
     peer.value.on('error', connectErrorHandler)
-
-    connection
-      .on('open', () => {
-        connections.set(id, connection)
-        resolve(connection)
-      })
-      .on('error', () => {
-        connections.delete(id)
-      })
+    peer.value.connect(ID_PREFIX + id, { reliable: true, label: id })
   })
 }
