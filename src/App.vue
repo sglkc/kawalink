@@ -2,6 +2,7 @@
 import ModeSwitch from '@/layouts/ModeSwitch.vue'
 import ReceiverForm from '@/layouts/ReceiverForm.vue'
 import SenderButton from '@/layouts/SenderButton.vue'
+import SenderList from '@/layouts/SenderList.vue'
 import UsernameForm from '@/layouts/UsernameForm.vue'
 import UploadForm from '@/layouts/UploadForm.vue'
 import Toast from '@/components/Toast.vue'
@@ -24,7 +25,8 @@ import { toasts } from '@/store/toast'
     <hr class="b-1.5 b-base" />
     <div v-if="settings.mode === 'sender'" class="grid gap-4">
       <SenderButton />
-      <UploadForm v-if="isConnected" />
+      <SenderList v-show="isConnected" />
+      <UploadForm v-show="isConnected" />
     </div>
     <div v-else class="grid gap-4">
       <ReceiverForm  />

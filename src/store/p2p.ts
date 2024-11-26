@@ -12,7 +12,7 @@ export const connections = shallowReactive(new Map<string, DataConnection>())
 
 export async function start(id: string) {
   return new Promise((resolve) => {
-    const newPeer = new Peer(ID_PREFIX + id, { secure: true, debug: 2 })
+    const newPeer = new Peer(ID_PREFIX + id, { secure: true, debug: 3 })
 
     newPeer
       .on('open', () => {
@@ -29,6 +29,10 @@ export async function start(id: string) {
 
         connections.set(id, connection)
         addToast({ type: 'success', text: `${id} joined` })
+      })
+      .on('disconnected', () => {
+        addToast({ type: 'error', text: 'Disconnected from sender' })
+        stop()
       })
       .on('error', (error) => {
         addToast({ type: 'error', text: error.message.replace(ID_PREFIX, '') })
@@ -61,6 +65,13 @@ export async function connect(id: string) {
     }
 
     peer.value.on('error', connectErrorHandler)
-    peer.value.connect(ID_PREFIX + id, { reliable: true, label: id })
+
+    const connection = peer.value.connect(ID_PREFIX + id, { reliable: true, label: id })
+
+    connection.once('open', () => resolve(connection))
+    connection.on('close', () => {
+      addToast({ type: 'error', text: 'Disconnected from sender' })
+      stop()
+    })
   })
 }

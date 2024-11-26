@@ -15,13 +15,9 @@ async function onReceiverSubmit() {
   if (!peer.value) await start(settings.username)
 
   connect(settings.sender)
-    .then(() => {
-      location.replace('#' + settings.sender)
-    })
-    .catch(() => false)
-    .finally(() => {
-      loading.value = false
-    })
+    .then(() => location.replace('#' + settings.sender))
+    .catch(() => {})
+    .finally(() => (loading.value = false))
 }
 </script>
 
