@@ -1,14 +1,12 @@
-import { ref, shallowReactive } from 'vue'
+import { ref } from 'vue'
 import Peer, { PeerError, type DataConnection } from 'peerjs'
 import { addToast } from './toast'
 
 const ID_PREFIX = 'p2share-'
 
 export const peer = ref<Peer>()
-
+export const receiver = ref<DataConnection>()
 export const isConnected = ref(false)
-
-export const connections = shallowReactive(new Map<string, DataConnection>())
 
 export async function start(id: string) {
   return new Promise<Peer>((resolve, reject) => {
@@ -25,12 +23,12 @@ export async function start(id: string) {
         const id = connection.label
 
         connection.on('close', () => {
-          connections.delete(id)
-          addToast({ type: 'error', text: `${id} left` })
+          receiver.value = undefined
+          addToast({ type: 'error', text: `No longer paired with ${id}` })
         })
 
-        connections.set(id, connection)
-        addToast({ type: 'success', text: `${id} joined` })
+        receiver.value = connection
+        addToast({ type: 'success', text: `Paired with ${id}` })
       })
       .on('disconnected', reject)
       .on('error', (error) => {
@@ -43,10 +41,9 @@ export async function start(id: string) {
 }
 
 export function stop() {
-  if (!peer.value) return
-
-  connections.clear()
-  peer.value.destroy()
+  receiver.value?.close()
+  receiver.value = undefined
+  peer.value?.destroy()
   peer.value = undefined
   isConnected.value = false
 }
@@ -54,9 +51,10 @@ export function stop() {
 export async function connect(id: string) {
   return new Promise<void>((resolve, reject) => {
     if (!peer.value) return reject(new Error('Peer not started'))
-    if (connections.has(id)) return resolve()
+    if (receiver.value) return resolve()
 
     const connectionHandler = () => {
+      addToast({ type: 'success', text: `Connected to ${id}` })
       connection.off('open', connectionHandler)
       resolve()
     }
