@@ -1,20 +1,22 @@
 import { shallowReactive, watchEffect } from 'vue'
 
 interface Settings {
-  username?: string
-  sender?: string
+  username: string
+  sender: string
   file?: File
 }
 
-const local = JSON.parse(localStorage.getItem('storage') ?? '{}') as Settings
-
 const settings = shallowReactive<Settings>({
-  username: local.username ?? Date.now().toString(),
-  sender: local.sender ?? location.hash.slice(1)
+  username: localStorage.getItem('p2share-username') ?? Date.now().toString(),
+  sender: location.hash.slice(1) ?? ''
 })
 
 watchEffect(() => {
-  localStorage.setItem('storage', JSON.stringify(settings))
+  localStorage.setItem('p2share-username', settings.username)
+})
+
+watchEffect(() => {
+  location.replace('#' + settings.sender)
 })
 
 export default settings
