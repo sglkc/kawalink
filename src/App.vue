@@ -16,12 +16,12 @@ import { toasts } from '@/store/toast'
       <Toast v-bind="toast" />
     </div>
   </TransitionGroup>
-  <form class="font-body md:p-8 p-4 mx-auto grid gap-4 max-w-96" @submit.prevent>
+  <form class="font-body md:p-8 p-4 mx-auto grid gap-4 max-w-128">
     <UsernameForm />
     <ModeSwitch />
     <ReceiverForm v-if="settings.mode === 'receiver'" />
     <SenderButton v-if="settings.mode === 'sender'"/>
-    <UploadForm v-if="settings.mode === 'sender'" />
+    <UploadForm v-if="(settings.mode === 'sender') && isConnected" />
   </form>
 </template>
 

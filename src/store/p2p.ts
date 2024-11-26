@@ -1,5 +1,5 @@
 import { ref, shallowReactive } from 'vue'
-import Peer, { type DataConnection } from 'peerjs'
+import Peer, { PeerError, type DataConnection } from 'peerjs'
 import { addToast } from './toast'
 
 const ID_PREFIX = 'p2share-'
@@ -12,16 +12,16 @@ export const connections = shallowReactive(new Map<string, DataConnection>())
 
 export async function start(id: string) {
   return new Promise((resolve) => {
-    const newPeer = new Peer(ID_PREFIX + id, { secure: true, debug: 3 })
+    const newPeer = new Peer(ID_PREFIX + id, { secure: true, debug: 2 })
 
     newPeer
       .on('open', () => {
         isConnected.value = true
         resolve(newPeer)
       })
-      .on<any>('error', stop)
-      .on('disconnected', () => {
-        addToast({ type: 'error', text: 'Disconnected from network' })
+      .on('error', (error) => {
+        addToast({ type: 'error', text: error.message })
+        stop()
       })
       .on('connection', (connection) => {
         const id = connection.peer.slice(ID_PREFIX.length)
@@ -32,15 +32,10 @@ export async function start(id: string) {
 
     peer.value = newPeer
   })
-    .catch(console.warn)
 }
 
-export function stop(reason?: string) {
+export function stop() {
   if (!peer.value) return
-
-  if (reason) {
-    addToast({ type: 'error', text: reason })
-  }
 
   connections.clear()
   peer.value.destroy()
@@ -50,10 +45,19 @@ export function stop(reason?: string) {
 
 export async function connect(id: string) {
   return new Promise<DataConnection>((resolve, reject) => {
-    if (!peer.value) return reject('Not connected')
+    if (!peer.value) return reject(new Error('Peer not started'))
     if (connections.has(id)) return resolve(connections.get(id)!)
 
+    const connectErrorHandler = (error: PeerError<string>) => {
+      if (error.type !== 'peer-unavailable' && !error.message.includes(id)) return
+
+      peer.value?.off('error', connectErrorHandler)
+      reject()
+    }
+
     const connection = peer.value.connect(ID_PREFIX + id, { reliable: true, label: id })
+
+    peer.value.on('error', connectErrorHandler)
 
     connection
       .on('open', () => {

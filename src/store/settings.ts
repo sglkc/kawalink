@@ -10,7 +10,7 @@ interface Settings {
 const settings = shallowReactive<Settings>({
   username: localStorage.getItem('p2share-username') ?? Date.now().toString(),
   sender: location.hash.slice(1) ?? '',
-  mode: 'sender'
+  mode: location.hash.slice(1) ? 'receiver' : 'sender'
 })
 
 watchEffect(() => {

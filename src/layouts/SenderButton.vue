@@ -32,16 +32,16 @@ function copyUrl() {
     :disabled="loading"
     @click.prevent="onFormSubmit"
   >
-    <div :class="{ 'i-mci:loading-line text-2xl animate-spin': loading }">
-      JOIN
+    <div class="m-auto" :class="{ 'i-mci:loading-line text-2xl animate-spin': loading }">
+      START SHARING!
     </div>
   </Button>
-  <div v-if="isConnected" class="flex gap-2">
-    <Button class="bg-blue-300" type="button" @click.prevent="copyUrl">
-      <div class="i-mci:copy-line text-xl" />
+  <div v-if="isConnected" class="grid grid-cols-2 gap-2">
+    <Button class="bg-blue-300" type="button" icon="i-mci:copy-line" @click.prevent="copyUrl">
+      Copy link
     </Button>
-    <Button class="bg-red-300" type="button" @click.prevent="stop">
-      <div class="i-mci:close-fill text-xl"></div>
+    <Button class="bg-red-300" type="button" icon="i-mci:exit-line" @click.prevent="stop">
+      Disconnect
     </Button>
   </div>
 </template>
