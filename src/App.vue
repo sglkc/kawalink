@@ -1,9 +1,13 @@
 <script setup lang="ts">
+import ModeSwitch from '@/layouts/ModeSwitch.vue'
 import ReceiverForm from '@/layouts/ReceiverForm.vue'
-import SenderForm from '@/layouts/SenderForm.vue'
+import SenderButton from '@/layouts/SenderButton.vue'
+import UsernameForm from '@/layouts/UsernameForm.vue'
 import UploadForm from '@/layouts/UploadForm.vue'
 import Toast from '@/components/Toast.vue'
-import { addToast, toasts } from '@/store/toast'
+import { isConnected } from '@/store/p2p'
+import settings from '@/store/settings'
+import { toasts } from '@/store/toast'
 </script>
 
 <template>
@@ -12,11 +16,13 @@ import { addToast, toasts } from '@/store/toast'
       <Toast v-bind="toast" />
     </div>
   </TransitionGroup>
-  <main class="font-body p-8 mx-auto grid gap-4 max-w-96">
-    <SenderForm />
-    <ReceiverForm />
-    <UploadForm />
-  </main>
+  <form class="font-body md:p-8 p-4 mx-auto grid gap-4 max-w-96" @submit.prevent>
+    <UsernameForm />
+    <ModeSwitch />
+    <ReceiverForm v-if="settings.mode === 'receiver'" />
+    <SenderButton v-if="settings.mode === 'sender'"/>
+    <UploadForm v-if="settings.mode === 'sender'" />
+  </form>
 </template>
 
 <style scoped>

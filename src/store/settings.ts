@@ -3,12 +3,14 @@ import { shallowReactive, watchEffect } from 'vue'
 interface Settings {
   username: string
   sender: string
+  mode: 'sender' | 'receiver'
   file?: File
 }
 
 const settings = shallowReactive<Settings>({
   username: localStorage.getItem('p2share-username') ?? Date.now().toString(),
-  sender: location.hash.slice(1) ?? ''
+  sender: location.hash.slice(1) ?? '',
+  mode: 'sender'
 })
 
 watchEffect(() => {
