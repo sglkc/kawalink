@@ -6,5 +6,5 @@ import { sendFile } from '@/store/p2p'
 
 <template>
   <FileUpload />
-  <Button @click.prevent="sendFile">send</Button>
+  <Button class="bg-green-300" @click.prevent="sendFile">Send</Button>
 </template>

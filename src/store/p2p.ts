@@ -87,14 +87,10 @@ export async function connect(id: string) {
 
       if (data instanceof Uint8Array) {
         const metadata = fileMetadata.value
-        const $file = new Blob([data], { type: metadata?.type })
-        const a = document.createElement('a')
 
-        fileProgress.value = 1
-        a.href = URL.createObjectURL($file)
-        a.download = metadata?.name ?? Date.now().toString()
-        a.click()
-        URL.revokeObjectURL(a.href)
+        file.value = new File([data], metadata?.name ?? Date.now().toString(), {
+          type: metadata?.type,
+        })
 
         return
       }
@@ -107,7 +103,6 @@ export async function connect(id: string) {
       if (!(e.data instanceof ArrayBuffer) || !fileMetadata.value) return
 
       fileProgress.value += e.data.byteLength / fileMetadata.value.size
-      console.log(fileProgress.value)
     }
   })
 }
@@ -122,4 +117,22 @@ export async function sendFile() {
 
   $receiver.send({ name, size, type })
   $receiver.send($file, true)
+}
+
+export function downloadFile() {
+  if (!file.value || !fileMetadata.value) {
+    addToast({ type: 'error', text: 'File has been deleted' })
+    return
+  }
+
+  const a = document.createElement('a')
+
+  fileProgress.value = 1
+  a.href = URL.createObjectURL(file.value)
+  a.download = fileMetadata.value.name ?? Date.now().toString()
+  a.click()
+  a.remove()
+
+  file.value = undefined
+  URL.revokeObjectURL(a.href)
 }

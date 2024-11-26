@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ModeSwitch from '@/layouts/ModeSwitch.vue'
 import ReceiverForm from '@/layouts/ReceiverForm.vue'
+import ReceiverProgress from '@/layouts/ReceiverProgress.vue'
 import SenderButton from '@/layouts/SenderButton.vue'
 import SenderList from '@/layouts/SenderList.vue'
 import UsernameForm from '@/layouts/UsernameForm.vue'
@@ -17,7 +18,7 @@ import { toasts } from '@/store/toast'
       <Toast v-bind="toast" />
     </div>
   </TransitionGroup>
-  <form class="font-body md:p-8 p-4 mx-auto grid gap-4 max-w-128">
+  <form class="font-body md:p-8 p-4 mx-auto grid gap-4 max-w-128" @submit.prevent>
     <div class="grid gap-4">
       <UsernameForm />
       <ModeSwitch />
@@ -29,6 +30,7 @@ import { toasts } from '@/store/toast'
     </div>
     <div v-else class="grid gap-4">
       <ReceiverForm  />
+      <ReceiverProgress />
     </div>
   </form>
 </template>
