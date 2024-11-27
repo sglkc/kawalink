@@ -48,7 +48,7 @@ async function onReceiverSubmit() {
         CONNECT
       </div>
     </Button>
-    <Button v-else class="bg-red-300" icon="i-mci:close-line" @click.prevent="stop">
+    <Button v-else class="bg-red-300" icon="i-mci:exit-line" @click.prevent="stop">
       Disconnect
     </Button>
   </div>

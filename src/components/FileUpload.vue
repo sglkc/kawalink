@@ -47,7 +47,7 @@ function onFileChange(e: Event | DragEvent) {
     @drop="onFileChange"
   >
     <p class="touch-none select-none truncate">
-      {{ file ? file.name : 'Click or drag-and-drop a file to send' }}
+      {{ file ? file.name : 'Click or drop a file here to send' }}
     </p>
     <div
       class="touch-none select-none text-4xl m-auto"

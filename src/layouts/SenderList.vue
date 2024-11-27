@@ -8,10 +8,15 @@ function disconnect() {
 </script>
 
 <template>
-  <div v-if="receiver" class="p-2 b-2 b-base flex gap-2 items-center">
-    <span class="ml-2">Connected with:</span>
-    <span class="grow">{{ receiver.peer.replace(ID_PREFIX, '') }}</span>
+  <div class="p-4 b-2 b-base flex gap-2 items-center">
+    <span class="grow">
+      {{ receiver
+        ? 'Sharing with ' + receiver.peer.replace(ID_PREFIX, '')
+        : 'No one connected yet :('
+      }}
+    </span>
     <Button
+      v-show="receiver"
       class="p-2 bg-red-200"
       icon="i-mci:close-line"
       type="button"

@@ -17,8 +17,8 @@ function resetFile() {
     />
     <Button
       v-show="file && receiver"
-      class="w-full"
-      :class="{ 'bg-green-300': !fileProgress }"
+      class="w-full fw-bold"
+      :class="{ 'bg-green-300': !fileProgress, 'text-gray-500': fileProgress }"
       @click.prevent="sendFile"
       :disabled="fileProgress"
     >
