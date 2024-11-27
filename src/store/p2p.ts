@@ -8,7 +8,7 @@ interface FileMetadata {
   type: string
 }
 
-const ID_PREFIX = 'p2share-'
+export const ID_PREFIX = 'p2share-'
 
 export const peer = ref<Peer>()
 export const receiver = ref<DataConnection>()
@@ -29,7 +29,7 @@ export async function start(id: string) {
         resolve(newPeer)
       })
       .on('connection', (connection) => {
-        const id = connection.label
+        const id = connection.peer.replace(ID_PREFIX, '')
 
         connection.on('close', () => {
           receiver.value = undefined
@@ -70,7 +70,7 @@ export async function connect(id: string) {
 
     peer.value.on('error', peerErrorHandler)
 
-    const connection = peer.value.connect(ID_PREFIX + id, { reliable: true, label: id })
+    const connection = peer.value.connect(ID_PREFIX + id, { reliable: true })
 
     connection.once('open', () => {
       addToast({ type: 'success', text: `Connected to ${id}` })
@@ -78,7 +78,7 @@ export async function connect(id: string) {
     })
 
     connection.once('close', () => {
-      addToast({ type: 'error', text: 'Disconnected from sender' })
+      addToast({ type: 'error', text: `Disconnected from ${id}` })
       stop()
     })
 
