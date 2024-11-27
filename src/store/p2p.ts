@@ -9,6 +9,11 @@ interface FileMetadata {
   length: number
 }
 
+const CREDENTIALS = {
+  username: '',
+  credential: ''
+}
+
 export const ID_PREFIX = 'p2share-'
 
 export const peer = ref<Peer>()
@@ -21,10 +26,38 @@ export const isConnected = ref(false)
 const fileChunks: Array<Uint8Array | ArrayBuffer> = []
 
 export async function start(id: string) {
-  return new Promise<Peer>((resolve, reject) => {
+  return new Promise<Peer>(async (resolve, reject) => {
     if (peer.value) return resolve(peer.value)
 
-    const newPeer = new Peer(ID_PREFIX + id, { secure: true, debug: 3 })
+    if (!CREDENTIALS.username || !CREDENTIALS.credential) {
+      try {
+        addToast({ type: 'info', text: 'Getting credentials...' })
+
+        const res = await fetch('https://speed.cloudflare.com/turn-creds')
+        const { username, credential } = await res.json()
+
+        CREDENTIALS.username = username
+        CREDENTIALS.credential = credential
+      } catch (error) {
+        addToast({ type: 'error', text: 'Failed connecting to outside world :(' })
+        console.error(error)
+      }
+    }
+
+    const newPeer = new Peer(ID_PREFIX + id, {
+      secure: true,
+      debug: 3,
+      config: {
+        iceServers: [
+          { urls: 'stun:stun.l.google.com:19302' },
+          {
+            urls: [ 'turn:turn.speed.cloudflare.com:50000' ],
+            ...CREDENTIALS
+          },
+        ],
+      }
+
+    })
 
     newPeer
       .on('open', () => {
@@ -65,7 +98,11 @@ export function stop() {
   }
 
   receiver.value = undefined
-  peer.value?.destroy()
+
+  if (peer.value && !peer.value.destroyed) {
+    peer.value?.destroy()
+  }
+
   peer.value = undefined
   isConnected.value = false
 }
@@ -88,36 +125,36 @@ export async function connect(id: string) {
     connection.once('open', () => {
       addToast({ type: 'success', text: `Connected to ${id}` })
       resolve()
+
+      connection.on('data', (data) => {
+        if (!data) return
+
+        if (
+          fileMetadata.value &&
+            (data instanceof ArrayBuffer || data instanceof Uint8Array)
+        ) {
+          const { name, type, length } = fileMetadata.value
+
+          fileChunks.push(data)
+          fileProgress.value = fileChunks.length / length
+          connection.send(fileProgress.value, false)
+
+          if (fileProgress.value >= 1) {
+            file.value = new File(fileChunks, name, { type })
+          }
+
+          return
+        }
+
+        fileMetadata.value = data as FileMetadata
+        fileProgress.value = 0
+        fileChunks.length = 0
+      })
     })
 
     connection.once('close', () => {
       addToast({ type: 'error', text: `Disconnected from ${id}` })
       stop()
-    })
-
-    connection.on('data', (data) => {
-      if (!data) return
-
-      if (
-        fileMetadata.value &&
-          (data instanceof ArrayBuffer || data instanceof Uint8Array)
-      ) {
-        const { name, type, length } = fileMetadata.value
-
-        fileChunks.push(data)
-        fileProgress.value = fileChunks.length / length
-        connection.send(fileProgress.value, false)
-
-        if (fileProgress.value >= 1) {
-          file.value = new File(fileChunks, name, { type })
-        }
-
-        return
-      }
-
-      fileMetadata.value = data as FileMetadata
-      fileProgress.value = 0
-      fileChunks.length = 0
     })
   })
 }
@@ -127,6 +164,7 @@ export async function sendFile() {
   const $receiver = receiver.value
 
   if (!$file || !$receiver) return
+  if (!$receiver.open) return addToast({ type: 'error', text: 'Not connected yet' })
 
   const { name, size, type } = $file
   const buffer = await $file.arrayBuffer()
