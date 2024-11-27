@@ -1,11 +1,12 @@
 import { ref } from 'vue'
-import Peer, { PeerError, type DataConnection } from 'peerjs'
+import Peer, { PeerError, util, type DataConnection } from 'peerjs'
 import { addToast } from './toast'
 
 interface FileMetadata {
   name: string
   size: number
   type: string
+  length: number
 }
 
 export const ID_PREFIX = 'p2share-'
@@ -16,6 +17,8 @@ export const file = ref<File>()
 export const fileMetadata = ref<FileMetadata>()
 export const fileProgress = ref(0)
 export const isConnected = ref(false)
+
+const fileChunks: Array<Uint8Array | ArrayBuffer> = []
 
 export async function start(id: string) {
   return new Promise<Peer>((resolve, reject) => {
@@ -30,6 +33,13 @@ export async function start(id: string) {
       })
       .on('connection', (connection) => {
         const id = connection.peer.replace(ID_PREFIX, '')
+
+        connection.on('data', (data) => {
+          if (typeof data === 'number') {
+            fileProgress.value = data
+            return
+          }
+        })
 
         connection.on('close', () => {
           receiver.value = undefined
@@ -50,7 +60,10 @@ export async function start(id: string) {
 }
 
 export function stop() {
-  receiver.value?.close()
+  if (receiver.value && receiver.value.open) {
+    receiver.value.close()
+  }
+
   receiver.value = undefined
   peer.value?.destroy()
   peer.value = undefined
@@ -85,25 +98,27 @@ export async function connect(id: string) {
     connection.on('data', (data) => {
       if (!data) return
 
-      if (data instanceof Uint8Array) {
-        const metadata = fileMetadata.value
+      if (
+        fileMetadata.value &&
+          (data instanceof ArrayBuffer || data instanceof Uint8Array)
+      ) {
+        const { name, type, length } = fileMetadata.value
 
-        file.value = new File([data], metadata?.name ?? Date.now().toString(), {
-          type: metadata?.type,
-        })
+        fileChunks.push(data)
+        fileProgress.value = fileChunks.length / length
+        connection.send(fileProgress.value, false)
+
+        if (fileProgress.value >= 1) {
+          file.value = new File(fileChunks, name, { type })
+        }
 
         return
       }
 
       fileMetadata.value = data as FileMetadata
       fileProgress.value = 0
+      fileChunks.length = 0
     })
-
-    connection.dataChannel.onmessage = (e) => {
-      if (!(e.data instanceof ArrayBuffer) || !fileMetadata.value) return
-
-      fileProgress.value += e.data.byteLength / fileMetadata.value.size
-    }
   })
 }
 
@@ -114,9 +129,15 @@ export async function sendFile() {
   if (!$file || !$receiver) return
 
   const { name, size, type } = $file
+  const buffer = await $file.arrayBuffer()
+  const chunks = util.chunk(buffer)
+  const length = chunks[0].total
 
-  $receiver.send({ name, size, type })
-  $receiver.send($file, true)
+  $receiver.send({ name, size, type, length })
+
+  for (const { data } of chunks) {
+    $receiver.send(data, false)
+  }
 }
 
 export function downloadFile() {

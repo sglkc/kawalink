@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { file } from '@/store/p2p'
+import { file, fileProgress } from '@/store/p2p'
 
 const isOnTop = ref(false)
 const sizeFormatter = new Intl.NumberFormat([], {
@@ -33,8 +33,8 @@ function onFileChange(e: Event | DragEvent) {
   if (!uploadedFile) return
 
   file.value = uploadedFile
+  fileProgress.value = 0
   isOnTop.value = false
-  console.log(file.value)
 }
 </script>
 
