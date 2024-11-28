@@ -29,9 +29,9 @@ export async function start(id: string) {
   return new Promise<Peer>(async (resolve, reject) => {
     if (peer.value) return resolve(peer.value)
 
-    if (!CREDENTIALS.username || !CREDENTIALS.credential) {
+    if ((!CREDENTIALS.username || !CREDENTIALS.credential) && import.meta.env.PROD) {
       try {
-        addToast({ type: 'info', text: 'Getting credentials...' })
+        addToast({ text: 'Getting credentials' })
 
         const res = await fetch('https://speed.cloudflare.com/turn-creds')
         const { username, credential } = await res.json()
@@ -46,7 +46,6 @@ export async function start(id: string) {
 
     const newPeer = new Peer(ID_PREFIX + id, {
       secure: true,
-      debug: 3,
       config: {
         iceServers: [
           { urls: 'stun:stun.l.google.com:19302' },
