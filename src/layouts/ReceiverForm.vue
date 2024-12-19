@@ -39,16 +39,16 @@ async function onReceiverSubmit() {
     />
     <Button
       v-if="!isConnected"
-      :class="{ 'bg-green-300': !loading, 'bg-gray-300': loading }"
+      :class="{ 'color-primary': !loading, 'bg-gray-300': loading }"
       type="submit"
       :disabled="loading"
       @click.prevent="onReceiverSubmit"
     >
-      <div :class="{ 'i-mci:loading-line text-2xl animate-spin': loading }">
+      <div class="fw-medium" :class="{ 'i-mci:loading-line text-2xl animate-spin': loading }">
         CONNECT
       </div>
     </Button>
-    <Button v-else class="bg-red-300" icon="i-mci:exit-line" @click.prevent="stop">
+    <Button v-else class="color-accent" icon="i-mci:exit-line" @click.prevent="stop">
       Disconnect
     </Button>
   </div>

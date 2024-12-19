@@ -13,7 +13,7 @@ import { isConnected } from '@/store/p2p'
       v-model.trim="settings.username"
       id="id-input"
       class="grow"
-      :class="{ 'bg-gray-100': isConnected }"
+      :class="{ 'bg-gray-200!': isConnected }"
       placeholder="Must be alphanumeric"
       pattern="[\w\d]{1,32}"
       minlength="1"

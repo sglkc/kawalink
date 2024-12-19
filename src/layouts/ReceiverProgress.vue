@@ -33,7 +33,7 @@ const sizeFormatter = new Intl.NumberFormat([], {
     />
     <Button
       class="w-full fw-bold"
-      :class="{ 'bg-green-300': fileProgress == 1, 'text-gray-500': fileProgress < 1 }"
+      :class="{ 'color-primary': fileProgress == 1, 'text-gray-500': fileProgress < 1 }"
       @click.prevent="downloadFile"
       :disabled="fileProgress < 1"
     >

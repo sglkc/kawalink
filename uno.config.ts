@@ -16,6 +16,9 @@ export default defineConfig({
     'b-base': 'b-black dark:border-white',
     'colors-primary': 'bg-black text-white dark:bg-white dark:text-black',
     'colors-secondary': 'bg-white text-black dark:bg-black dark:text-white',
+    'color-primary': 'bg-primary text-fg',
+    'color-secondary': 'bg-secondary text-fg',
+    'color-accent': 'bg-accent text-fg'
   },
   theme: {
     fontFamily: {
@@ -25,6 +28,17 @@ export default defineConfig({
       base: '4px 4px',
       sm: '8px 8px',
       md: '16px 16px'
+    },
+    colors: {
+      primary: '#759893',
+      secondary: '#c7b4bd',
+      accent: '#b0a094',
+      bg: '#fcfdfc',
+      fg: '#0e1312',
+      success: '',
+      info: '',
+      warn: '',
+      error: ''
     }
   },
   variants: [

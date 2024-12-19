@@ -29,7 +29,7 @@ export async function start(id: string) {
   return new Promise<Peer>(async (resolve, reject) => {
     if (peer.value) return resolve(peer.value)
 
-    if ((!CREDENTIALS.username || !CREDENTIALS.credential) && import.meta.env.PROD) {
+    if (!CREDENTIALS.username || !CREDENTIALS.credential) {
       try {
         addToast({ text: 'Getting credentials' })
 
@@ -46,6 +46,7 @@ export async function start(id: string) {
 
     const newPeer = new Peer(ID_PREFIX + id, {
       secure: true,
+      debug: 3,
       config: {
         iceServers: [
           { urls: 'stun:stun.l.google.com:19302' },

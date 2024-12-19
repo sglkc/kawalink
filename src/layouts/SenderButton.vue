@@ -32,20 +32,20 @@ function copyUrl() {
 <template>
   <Button
     v-if="!isConnected"
-    :class="{ 'bg-green-300': !loading, 'bg-gray-300': loading }"
+    :class="{ 'color-primary': !loading, 'bg-gray-300': loading }"
     type="submit"
     :disabled="loading"
     @click.prevent="onFormSubmit"
   >
-    <div class="m-auto" :class="{ 'i-mci:loading-line text-2xl animate-spin': loading }">
+    <div class="m-auto fw-medium" :class="{ 'i-mci:loading-line text-2xl animate-spin': loading }">
       START SHARING!
     </div>
   </Button>
   <div v-if="isConnected" class="grid grid-cols-2 gap-2">
-    <Button class="bg-blue-300" type="button" icon="i-mci:copy-line" @click.prevent="copyUrl">
+    <Button class="color-primary" type="button" icon="i-mci:copy-line" @click.prevent="copyUrl">
       Copy link
     </Button>
-    <Button class="bg-red-300" type="button" icon="i-mci:exit-line" @click.prevent="stop">
+    <Button class="color-accent" type="button" icon="i-mci:exit-line" @click.prevent="stop">
       Disconnect
     </Button>
   </div>

@@ -12,13 +12,13 @@ function resetFile() {
   <FileUpload @change="resetFile" />
   <div class="relative">
     <div
-      class="absolute inset-0 bg-green-300 -z-1"
+      class="absolute inset-0 color-primary -z-1"
       :style="{ right: `${100 - fileProgress * 100}%` }"
     />
     <Button
       v-show="file && receiver"
       class="w-full fw-bold"
-      :class="{ 'bg-green-300': !fileProgress, 'text-gray-500': fileProgress }"
+      :class="{ 'color-primary': !fileProgress, 'text-gray-500': fileProgress }"
       @click.prevent="sendFile"
       :disabled="fileProgress"
     >

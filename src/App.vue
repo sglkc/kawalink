@@ -18,7 +18,11 @@ import { toasts } from '@/store/toast'
       <Toast v-bind="toast" />
     </div>
   </TransitionGroup>
-  <form class="font-body md:p-8 p-4 mx-auto grid gap-4 max-w-128" @submit.prevent>
+  <header class="mb-8">
+    <h1 class="fw-bold text-4xl">KAWALINK!</h1>
+    <h2 class="opacity-50">File sharing without the hassle!</h2>
+  </header>
+  <form class="grid gap-4" @submit.prevent>
     <div class="grid gap-4">
       <UsernameForm />
       <ModeSwitch />
