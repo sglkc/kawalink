@@ -1,20 +1,18 @@
-# p2p-share
+# Kawalink
 
-This template should help get you started developing with Vue 3 in Vite.
+Simple web-based cross-platform file sharing via WebRTC using Peer.js and Cloudflare TURN server. Abandoned project :(
 
-## Recommended IDE Setup
+## Sender Screen
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+<img src="https://github.com/user-attachments/assets/868931bc-04da-4560-95d5-c748b7090362" alt="Sender screen" width="40%" />
 
-## Type Support for `.vue` Imports in TS
+## Receiver Screen
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+<img src="https://github.com/user-attachments/assets/79e44c64-cc95-4211-8b61-bc69b9fbda6f" alt="Receiver screen" width="40%" />
 
-## Customize configuration
+## Development
 
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
+### Project Setup
 
 ```sh
 pnpm install
@@ -31,3 +29,7 @@ pnpm dev
 ```sh
 pnpm build
 ```
+
+## License
+
+MIT Licensed.
